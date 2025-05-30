@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Notice Board</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Notice Board Styles */
+        .notice-board {
+            width: 100%;
+            max-width: 800px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .board-header {
+            background: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .board-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .board-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .notices-container {
+            position: relative;
+            height: 400px;
+            overflow: hidden;
+        }
+
+        .notice {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 30px;
+            background-color: #fff;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.5s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .notice.active {
+            opacity: 1;
+            transform: translateX(0);
+            z-index: 1;
+        }
+
+        .notice-pin {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(to right, #ff758c, #ff7eb3);
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            margin-bottom: 15px;
+        }
+
+        .notice-content {
+            background: #f9f9f9;
+            border-left: 5px solid #2575fc;
+            padding: 25px;
+            border-radius: 0 8px 8px 0;
+            width: 100%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .notice:hover .notice-content {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .notice-title {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 22px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .notice-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+        }
+
+        .notice-date {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .notice-text {
+            color: #34495e;
+            line-height: 1.6;
+            font-size: 16px;
+            flex-grow: 1;
+        }
+
+        .board-footer {
+            padding: 15px;
+            background: #f5f7fa;
+            display: flex;
+            justify-content: center;
+        }
+
+        .notice-indicators {
+            display: flex;
+            gap: 10px;
+        }
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            background: #bdc3c7;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .indicator.active {
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            transform: scale(1.2);
+        }
+
+        /* Animation for new notices */
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="notice-board">
+        <div class="board-header">
+            <h1><i class="fas fa-bullhorn"></i> NOTICE BOARD</h1>
+            <div class="board-controls">
+                <button class="control-btn prev-btn" onclick="changeNotice(-1)"><i class="fas fa-chevron-left"></i></button>
+                <button class="control-btn next-btn" onclick="changeNotice(1)"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+        
+        <div class="notices-container">
+            <!-- NOTICE 1 - You can edit this section -->
+            <div class="notice active" data-index="0">
+                <div class="notice-pin"></div>
+                <div class="notice-content">
+                    <h2 class="notice-title">Important Update</h2>
+                    <div class="notice-date"><i class="far fa-calendar-alt"></i> May 30, 2025</div>
+                    <p class="notice-text">All staff members are required to attend the monthly meeting on June 5th at 10:00 AM in the conference room. Please bring your quarterly reports and be prepared to discuss current projects.</p>
+                </div>
+            </div>
+            
+            <!-- NOTICE 2 - You can edit this section -->
+            <div class="notice" data-index="1">
+                <div class="notice-pin"></div>
+                <div class="notice-content">
+                    <h2 class="notice-title">System Maintenance</h2>
+                    <div class="notice-date"><i class="far fa-calendar-alt"></i> June 2, 2025</div>
+                    <p class="notice-text">The company servers will undergo maintenance on June 3rd from 2:00 AM to 5:00 AM. During this time, email services, the company website, and internal databases will be temporarily unavailable. Please plan your work accordingly.</p>
+                </div>
+            </div>
+            
+            <!-- NOTICE 3 - You can edit this section -->
+            <div class="notice" data-index="2">
+                <div class="notice-pin"></div>
+                <div class="notice-content">
+                    <h2 class="notice-title">Holiday Announcement</h2>
+                    <div class="notice-date"><i class="far fa-calendar-alt"></i> June 15, 2025</div>
+                    <p class="notice-text">The office will be closed on June 19th in observance of Juneteenth. Regular operations will resume on June 20th. Enjoy the long weekend and remember the significance of this important day in American history.</p>
+                </div>
+            </div>
+            
+            <!-- NOTICE 4 - You can edit this section -->
+            <div class="notice" data-index="3">
+                <div class="notice-pin"></div>
+                <div class="notice-content">
+                    <h2 class="notice-title">New Policy</h2>
+                    <div class="notice-date"><i class="far fa-calendar-alt"></i> June 1, 2025</div>
+                    <p class="notice-text">Starting July 1st, the company will implement a new remote work policy. Employees will be allowed to work from home up to 3 days per week. Please review the updated guidelines in the employee portal and complete the mandatory training by June 25th.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="board-footer">
+            <div class="notice-indicators">
+                <span class="indicator active" data-index="0" onclick="goToNotice(0)"></span>
+                <span class="indicator" data-index="1" onclick="goToNotice(1)"></span>
+                <span class="indicator" data-index="2" onclick="goToNotice(2)"></span>
+                <span class="indicator" data-index="3" onclick="goToNotice(3)"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentNotice = 0;
+        const notices = document.querySelectorAll('.notice');
+        const indicators = document.querySelectorAll('.indicator');
+
+        function changeNotice(step) {
+            // Hide current notice
+            notices[currentNotice].classList.remove('active');
+            indicators[currentNotice].classList.remove('active');
+            
+            // Calculate new notice index
+            currentNotice += step;
+            
+            // Handle wrap-around
+            if (currentNotice >= notices.length) currentNotice = 0;
+            if (currentNotice < 0) currentNotice = notices.length - 1;
+            
+            // Show new notice
+            notices[currentNotice].classList.add('active');
+            indicators[currentNotice].classList.add('active');
+        }
+
+        function goToNotice(index) {
+            // Hide current notice
+            notices[currentNotice].classList.remove('active');
+            indicators[currentNotice].classList.remove('active');
+            
+            // Set new notice
+            currentNotice = index;
+            
+            // Show new notice
+            notices[currentNotice].classList.add('active');
+            indicators[currentNotice].classList.add('active');
+        }
+
+        // Auto-rotate notices every 5 seconds
+        setInterval(() => {
+            changeNotice(1);
+        }, 5000);
+    </script>
+</body>
+</html>
