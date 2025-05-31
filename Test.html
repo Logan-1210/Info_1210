@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Share Your Thoughts With Me Thango</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;600&display=swap');
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #ffcce6, #ffb3d9, #ff99cc);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            padding: 40px 30px;
+            border: 2px solid rgba(255, 102, 179, 0.2);
+            z-index: 10;
+        }
+        
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            color: #ff3399;
+            text-align: center;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            margin: 10px 0 20px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1.5s;
+            line-height: 1.2;
+        }
+        
+        .heart {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background-color: #ff66b3;
+            transform: rotate(45deg);
+            animation: float 6s infinite ease-in-out;
+            opacity: 0.8;
+            z-index: 1;
+        }
+        
+        .heart:before, .heart:after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background-color: #ff66b3;
+            border-radius: 50%;
+        }
+        
+        .heart:before {
+            top: -12px;
+            left: 0;
+        }
+        
+        .heart:after {
+            top: 0;
+            left: -12px;
+        }
+        
+        .heart1 { top: 10%; left: 10%; animation-delay: 0s; }
+        .heart2 { top: 20%; right: 15%; animation-delay: 1.5s; }
+        .heart3 { bottom: 15%; left: 20%; animation-delay: 3s; }
+        .heart4 { bottom: 25%; right: 10%; animation-delay: 4.5s; }
+        
+        @keyframes float {
+            0%, 100% { transform: rotate(45deg) translateY(0) scale(1); }
+            50% { transform: rotate(45deg) translateY(-20px) scale(1.1); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+            animation: slideUp 1s ease-out;
+            position: relative;
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #ff3399;
+            font-size: clamp(16px, 4vw, 18px);
+            padding-left: 10px;
+        }
+        
+        .text-box {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.08);
+            border: 2px solid #ffb3d9;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Background images for text areas */
+        .text-box.problem-box {
+            background: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .text-box.solution-box {
+            background: url('https://images.unsplash.com/photo-1528164344705-47542687000d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .text-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 245, 250, 0.85);
+            z-index: 0;
+            border-radius: 12px;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: clamp(14px, 4vw, 16px);
+            transition: all 0.3s;
+            background-color: transparent;
+            resize: vertical;
+            min-height: 150px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        textarea::placeholder {
+            color: #ff99cc;
+            opacity: 0.9;
+        }
+        
+        .text-box:focus-within {
+            border-color: #ff3399;
+            box-shadow: 0 0 0 4px rgba(255, 51, 153, 0.25);
+        }
+        
+        .text-box:focus-within::before {
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        textarea:focus {
+            outline: none;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #ff3399, #ff0066);
+            color: white;
+            border: none;
+            padding: 16px 35px;
+            font-size: clamp(16px, 4vw, 18px);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: block;
+            margin: 35px auto;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            animation: pulse 2s infinite;
+            width: 100%;
+            max-width: 300px;
+            box-shadow: 0 5px 20px rgba(255, 51, 153, 0.4);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ff0066, #ff3399);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: -1;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(255, 51, 153, 0.5);
+        }
+        
+        .submit-btn:hover::before {
+            opacity: 1;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 51, 153, 0.7); }
+            70% { box-shadow: 0 0 0 18px rgba(255, 51, 153, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 51, 153, 0); }
+        }
+        
+        .message {
+            text-align: center;
+            margin: 25px 0;
+            font-style: italic;
+            color: #ff3399;
+            animation: fadeIn 2s;
+            font-size: clamp(15px, 4vw, 17px);
+            line-height: 1.6;
+            padding: 0 15px;
+        }
+        
+        /* Thank you message */
+        .thank-you {
+            display: none;
+            text-align: center;
+            padding: 30px;
+            animation: fadeIn 1s;
+        }
+        
+        .thank-you h2 {
+            color: #ff3399;
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(2.5rem, 6vw, 3.5rem);
+            margin-bottom: 25px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Korean love symbol animation */
+        .korean-love {
+            font-size: 120px;
+            text-align: center;
+            margin: 25px 0;
+            display: block;
+            animation: loveAnimation 2.5s infinite ease-in-out;
+            transform-origin: center;
+            filter: drop-shadow(0 5px 10px rgba(255, 51, 153, 0.3));
+        }
+        
+        @keyframes loveAnimation {
+            0%, 100% { 
+                transform: scale(1) rotate(0deg); 
+                color: #ff3399;
+            }
+            20% { 
+                transform: scale(1.2) rotate(-15deg); 
+                color: #ff66b3;
+            }
+            40% { 
+                transform: scale(1.3) rotate(5deg); 
+                color: #ff0066;
+            }
+            60% { 
+                transform: scale(1.2) rotate(15deg); 
+                color: #ff66b3;
+            }
+            80% { 
+                transform: scale(1.1) rotate(-5deg); 
+                color: #ff3399;
+            }
+        }
+        
+        .thank-you p {
+            font-size: clamp(16px, 4vw, 18px);
+            margin: 15px 0;
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        /* Loading spinner */
+        .spinner {
+            display: none;
+            width: 50px;
+            height: 50px;
+            margin: 30px auto;
+            border: 5px solid rgba(243, 243, 243, 0.8);
+            border-top: 5px solid #ff3399;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-message {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #ff3399;
+            display: none;
+        }
+        
+        /* Background decorations */
+        .bg-decoration {
+            position: fixed;
+            z-index: 0;
+            opacity: 0.1;
+            font-size: 300px;
+            animation: floatBg 20s infinite linear;
+        }
+        
+        @keyframes floatBg {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-100px) rotate(180deg); }
+            100% { transform: translateY(0) rotate(360deg); }
+        }
+        
+        .bg-1 { top: 5%; left: 5%; animation-duration: 25s; }
+        .bg-2 { top: 15%; right: 10%; animation-duration: 30s; }
+        .bg-3 { bottom: 10%; left: 15%; animation-duration: 35s; }
+        .bg-4 { bottom: 20%; right: 5%; animation-duration: 40s; }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px 20px;
+            }
+            
+            .heart {
+                width: 20px;
+                height: 20px;
+            }
+            
+            .heart:before, .heart:after {
+                width: 20px;
+                height: 20px;
+            }
+            
+            .heart:before {
+                top: -10px;
+            }
+            
+            .heart:after {
+                left: -10px;
+            }
+            
+            .submit-btn {
+                padding: 15px 30px;
+                max-width: 260px;
+            }
+            
+            .korean-love {
+                font-size: 90px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px 15px;
+            }
+            
+            textarea {
+                min-height: 120px;
+            }
+            
+            .submit-btn {
+                max-width: 100%;
+            }
+            
+            .korean-love {
+                font-size: 80px;
+                margin: 15px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background decorations -->
+    <div class="bg-decoration bg-1">🫰</div>
+    <div class="bg-decoration bg-2">🫶</div>
+    <div class="bg-decoration bg-3">🤌</div>
+    <div class="bg-decoration bg-4">🤝</div>
+    
+    <div class="container">
+        <!-- Floating hearts -->
+        <div class="heart heart1"></div>
+        <div class="heart heart2"></div>
+        <div class="heart heart3"></div>
+        <div class="heart heart4"></div>
+        
+        <h1>Share Your Thoughts With Me Thango</h1>
+        <p class="message">Unakkenna venum sollu…🤌 Ulagaththai kaatta sollu 🤝</p>
+        
+        <form id="contactForm">
+            <input type="hidden" name="_subject" value="Avalin ennam...">
+            <input type="text" name="_gotcha" style="display:none">
+            
+            <div class="form-group">
+                <label for="problem">Enna Aachu Thango 🫂?</label>
+                <div class="text-box problem-box">
+                    <textarea id="problem" name="problem" required placeholder="Un manasula irukkurathu sollu thango🫂"></textarea>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="solution">Enna pandrathu nu sollu kuttyy 🤌?</label>
+                <div class="text-box solution-box">
+                    <textarea id="solution" name="solution" placeholder=""></textarea>
+                </div>
+            </div>
+            
+            <button type="submit" class="submit-btn">Send to Your Logumaniii🤝</button>
+            <div class="spinner" id="spinner"></div>
+            <div class="status-message" id="statusMessage"></div>
+        </form>
+        
+        <div class="thank-you" id="thankYou">
+            <h2>I Love You Thango🫶</h2>
+            <div class="korean-love">🫰</div>
+            <p>I got your msg di Chella kuttyyyyy🤌</p>
+            <p>I'll get back to you soon🫂</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const submitBtn = document.querySelector('.submit-btn');
+            const spinner = document.getElementById('spinner');
+            const statusMessage = document.getElementById('statusMessage');
+            
+            // Show loading spinner
+            submitBtn.style.display = 'none';
+            spinner.style.display = 'block';
+            statusMessage.style.display = 'block';
+            statusMessage.textContent = 'Sending your message with love...';
+            statusMessage.style.color = '#ff3399';
+            
+            // Simulate sending process
+            setTimeout(() => {
+                // Hide spinner and show thank you message
+                spinner.style.display = 'none';
+                statusMessage.style.display = 'none';
+                document.getElementById('contactForm').style.display = 'none';
+                document.getElementById('thankYou').style.display = 'block';
+            }, 2000);
+        });
+
+        // Prevent form resubmission on page refresh
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+    </script>
+</body>
+  </html>
